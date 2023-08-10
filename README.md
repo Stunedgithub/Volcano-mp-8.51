@@ -1,6 +1,5 @@
 # Volcano-8.51
-Discord: "@jyzo.",
-**YAY**
+discord to play https://discord.gg/T3HMAnHPnz
 </br>
 blurr stop begigng for 8.51 gs 
 </br>
