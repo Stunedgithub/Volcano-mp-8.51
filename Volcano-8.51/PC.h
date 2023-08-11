@@ -52,13 +52,21 @@ void ServerReadyToStartMatchHook(AFortPlayerController* PC)
 		
 		static auto PUMP = UObject::FindObject<UFortItemDefinition>("WID_Shotgun_Standard_Athena_UC_Ore_T03.WID_Shotgun_Standard_Athena_UC_Ore_T03");
 		static auto AR = UObject::FindObject<UFortItemDefinition>("WID_Assault_Auto_Athena_R_Ore_T03.WID_Assault_Auto_Athena_R_Ore_T03");
-		static auto Grap = UObject::FindObject<UFortItemDefinition>("WID_Hook_Gun_VR_Ore_T03.WID_Hook_Gun_VR_Ore_T03");
+		static auto A = UObject::FindObject<UFortItemDefinition>("WID_Sniper_BoltAction_Scope_Athena_SR_Ore_T03.WID_Sniper_BoltAction_Scope_Athena_SR_Ore_T03");
+		static auto Grappler = UObject::FindObject<UFortItemDefinition>("WID_Hook_Gun_Slide.WID_Hook_Gun_Slide");
+		static auto arzarar = UObject::FindObject<UFortItemDefinition>("AthenaAmmoDataBulletsMedium.AthenaAmmoDataBulletsMedium");
+		static auto shells = UObject::FindObject<UFortItemDefinition>("AthenaAmmoDataShells.AthenaAmmoDataShells");
+		static auto H = UObject::FindObject<UFortItemDefinition>("AthenaAmmoDataBulletsHeavy.AthenaAmmoDataBulletsHeavy");
 
 		Inventory::AddItem(PC, AR, 1, 30);
+		Inventory::AddItem(PC, H, 1, 30);
+		Inventory::AddItem(PC, A, 30, 1);
 		Inventory::AddItem(PC, PUMP, 1, 5);
-		Inventory::AddItem(PC, ((UFortWeaponItemDefinition*)AR)->GetAmmoWorldItemDefinition_BP(), 30);
-		Inventory::AddItem(PC, ((UFortWeaponItemDefinition*)PUMP)->GetAmmoWorldItemDefinition_BP(), 30);
-		Inventory::AddItem(PC, Grap, 1, 10);
+		Inventory::AddItem(PC, Grappler, 1, 10);
+		Inventory::AddItem(PC, arzarar, 30);
+		Inventory::AddItem(PC, shells, 30);
+		static auto Mats = UObject::FindObject<UFortItemDefinition>("WoodItemData.WoodItemData");
+		Inventory::AddItem(PC, Mats, 999999);
 
 		// Inventory::AddItem(PC, shells, 30);
 		PC->bInfiniteAmmo = true;
