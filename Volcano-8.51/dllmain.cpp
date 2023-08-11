@@ -2,6 +2,8 @@
 #include "gaymode.h"
 #include "framework.h"
 #include "PC.h"
+#include "Farming.h"
+#include "Teams.h"
 
 DWORD Main(LPVOID)
 {
@@ -14,13 +16,37 @@ DWORD Main(LPVOID)
     MH_Initialize();
     InitGObjects();
 
+    Sleep(5000); // Reboot Launcher 
+
     LOG_("UwU time to open levle!!!");
     LOG_("skidada!da!ad!dad!ad!a");
+
+
+    ((UKismetSystemLibrary*)UKismetSystemLibrary::StaticClass()->DefaultObject)->ExecuteConsoleCommand(GetWorld(), L"open Athena_Terrain", nullptr);
+    GetEngine()->GameInstance->LocalPlayers.Remove(0);
+
+    void** VTAblAAAA = *(void***)GetDefObj<UAbilitySystemComponent>();
+    LOG_("aaaa: 0x{:x}", __int64(VTAblAAAA) - __int64(GetModuleHandleW(0)));
+
+    void** VFTYAYONG = *(void***)GetDefObj<AAthena_PlayerController_C>();
+    LOG_("pc vft: 0x{:x}", __int64(VFTYAYONG) - __int64(GetModuleHandleW(0)));
+
+
+
+    auto Addr = GetOffsetBRUH(0xFF343C);  // 0xFF343B // WARMUP CRASH
+    DWORD oldProtection;
+    VirtualProtect((LPVOID)Addr, 1, PAGE_EXECUTE_READWRITE, &oldProtection);
+
+    *(uint8_t*)Addr = 0x85;
+
+    DWORD tempProtection;
+    VirtualProtect((LPVOID)Addr, 1, oldProtection, &tempProtection);
 
     MH_CreateHook((LPVOID)GetOffsetBRUH(0x2D39300), TickFlushHook, (void**)&TickFlushOG);
     MH_EnableHook((LPVOID)GetOffsetBRUH(0x2D39300));
 
-    MH_CreateHook((LPVOID)GetOffsetBRUH(0xCF2E80), DispatchReqHook, (void**)&DispatchReqOG);
+    // I don't really know why is this but it doesn't call SpawnDefaultPawnFor when im making a3 argument 3 imma check what happens
+    MH_CreateHook((LPVOID)GetOffsetBRUH(0xCF2E80), DispatchReqHook, (void**)&DispatchReqOG); // 0xCF2E80
     MH_EnableHook((LPVOID)GetOffsetBRUH(0xCF2E80));
 
     // 0x2C03D20
@@ -43,26 +69,28 @@ DWORD Main(LPVOID)
     MH_CreateHook((LPVOID)GetOffsetBRUH(0x29A40F0), AActorGetNetMode, nullptr);
     MH_EnableHook((LPVOID)GetOffsetBRUH(0x29A40F0));
 
+    MH_CreateHook((LPVOID)GetOffsetBRUH(0x13876D0), NoMcp, nullptr);
+    MH_EnableHook((LPVOID)GetOffsetBRUH(0x13876D0));
+
     InitHoksPC();
     InitAbilities();
 
-    ((UKismetSystemLibrary*)UKismetSystemLibrary::StaticClass()->DefaultObject)->ExecuteConsoleCommand(GetWorld(), L"open Athena_Terrain", nullptr);
-    GetEngine()->GameInstance->LocalPlayers.Remove(0);
-
-    void** VTAblAAAA = *(void***)GetDefObj<UAbilitySystemComponent>();
-    LOG_("aaaa: 0x{:x}", __int64(VTAblAAAA) - __int64(GetModuleHandleW(0)));
-
-    auto Addr = GetOffsetBRUH(0xFF343C);  // 0xFF343B // WARMUP CRASH
-    DWORD oldProtection;
-    VirtualProtect((LPVOID)Addr, 1, PAGE_EXECUTE_READWRITE, &oldProtection);
-
-    *(uint8_t*)Addr = 0x85;
-
-    DWORD tempProtection;
-    VirtualProtect((LPVOID)Addr, 1, oldProtection, &tempProtection);
-
-
+    InitFarming();
     HOKSREAL();
+
+    VirtualHook(GetEngine(), 0x50, GetMaxTickRate);
+    MH_CreateHook((LPVOID)GetOffsetBRUH(0x1E054E0), CollectGarbage, nullptr);
+    MH_EnableHook((LPVOID)GetOffsetBRUH(0x1E054E0));
+
+    MH_CreateHook((LPVOID)GetOffsetBRUH(0xFA9B20), PickTeamHook, nullptr);
+    MH_EnableHook((LPVOID)GetOffsetBRUH(0xFA9B20));
+
+    MH_CreateHook((LPVOID)GetOffsetBRUH(0xFB9830), SetMegaStormStuffHOOK, (void**)&SetMegaStormStuffidkREALOG);
+    MH_EnableHook((LPVOID)GetOffsetBRUH(0xFB9830));
+    
+    //// 0x15292F0
+    //MH_CreateHook((LPVOID)GetOffsetBRUH(0x15292F0), GetSquadIdForCurrentPlayerHook, nullptr);
+    //MH_EnableHook((LPVOID)GetOffsetBRUH(0x15292F0));
 
     return 1;
 }

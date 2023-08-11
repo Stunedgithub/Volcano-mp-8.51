@@ -1,5 +1,6 @@
 #pragma once
-#include "framework.h"
+#include "Teams.h"
+#include "Looting.h"
 
 bool (*ReadyToStartMatchOG)(void*);
 bool ReadyToStartMatchHook(AFortGameModeAthena* a1)
@@ -9,24 +10,20 @@ bool ReadyToStartMatchHook(AFortGameModeAthena* a1)
 	{
 		bPLAYLIST = true;
 
-		auto playlist = UObject::FindObject<UFortPlaylistAthena>("Playlist_DefaultSolo.Playlist_DefaultSolo");
+		auto playlist = UObject::FindObject<UFortPlaylistAthena>(Globals::PlaylistName);
 		if (playlist)
 		{
-
 			GetGameState()->CurrentPlaylistInfo.BasePlaylist = playlist;
 			GetGameState()->CurrentPlaylistInfo.OverridePlaylist = playlist;
 			GetGameState()->CurrentPlaylistInfo.PlaylistReplicationKey++;
 			GetGameState()->CurrentPlaylistInfo.MarkArrayDirty();
 			GetGameState()->OnRep_CurrentPlaylistInfo();
 
-			float TimeSeconds = GetDefObj<UGameplayStatics>()->GetTimeSeconds(GetWorld());
-
-			GetGameState()->WarmupCountdownEndTime = TimeSeconds + 100.f;
-			GetGameState()->WarmupCountdownStartTime = TimeSeconds;
-			GetGameMode()->WarmupEarlyCountdownDuration = 100.f;
-			GetGameMode()->WarmupCountdownDuration = 100.f;
-
-			GetGameMode()->WarmupRequiredPlayerCount = 1; 
+			TeamIndex = playlist->DefaultFirstTeam;
+			LOG_("FirstTeam: {}", TeamIndex);
+			NumPlayerPerTeam = 1;// playlist->MaxSquadSize;
+			LOG_("MaxPlayerPerTeam: {}", NumPlayerPerTeam);
+			// GetGameMode()->WarmupRequiredPlayerCount = 1; 
 		}
 	}
 
@@ -39,8 +36,17 @@ bool ReadyToStartMatchHook(AFortGameModeAthena* a1)
 	{
 		bListneing = true;
 		GetGameState()->OnRep_CurrentPlaylistInfo();
+		InitLooting();
 		Listen();
 		a1->bWorldIsReady = true;
+
+
+		float TimeSeconds = GetStatics()->GetTimeSeconds(GetWorld());
+		GetGameState()->WarmupCountdownEndTime = TimeSeconds + 120.f;
+		GetGameMode()->WarmupCountdownDuration = 120.f;
+		GetGameState()->WarmupCountdownStartTime = TimeSeconds;
+		GetGameMode()->WarmupEarlyCountdownDuration = 120.f;
+
 	}
 
 	bool Ret = false;
